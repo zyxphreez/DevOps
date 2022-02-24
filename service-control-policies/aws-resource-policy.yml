@@ -6,3 +6,11 @@
     - "s3:DeleteObjectVersion"
   resources:
     - "*"
+
+- sid: "DenyS3BucketsPublicAccess"
+  effect: "Deny"
+  actions:
+    - "s3:PutBucketPublicAccessBlock"
+    - "s3:DeletePublicAccessBlock"
+  resources:
+    - "*"
