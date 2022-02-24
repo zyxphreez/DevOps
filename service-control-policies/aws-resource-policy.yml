@@ -1,0 +1,8 @@
+- sid: "ProtectS3Buckets"
+  effect: "Deny"
+  actions:
+    - "s3:DeleteBucket"
+    - "s3:DeleteObject"
+    - "s3:DeleteObjectVersion"
+  resources:
+    - "*"
