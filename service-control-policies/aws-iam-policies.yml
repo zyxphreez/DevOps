@@ -5,14 +5,3 @@
   resources:
     - "*"
 
-- sid: "DenyRootAccountAccess"
-  effect: "Deny"
-  actions:
-    - "*"
-  resources:
-    - "*"
-  condition:
-    - test: "StringLike"
-      variable: "aws:PrincipalArn"
-      values:
-        - "arn:aws:iam::*:root"
