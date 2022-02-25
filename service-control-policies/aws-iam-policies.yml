@@ -1,5 +1,5 @@
 - sid: "DenyLeaveOrganization"
-  effect: "Allow"
+  effect: "Deny"
   actions:
     - "organizations:LeaveOrganization"
   resources:
