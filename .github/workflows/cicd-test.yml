@@ -1,0 +1,43 @@
+name: CICD Backend Pipeline on Develop
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+env:
+  ENVIRONMENT: "dev"  
+  GH_REPOSITORY_NAME: GlyphGenAI
+  S3_VERSION: "s3://csekspreprodbuilds/builds/eks"
+  BUILD_NUMBER: ${{ github.run_number }}
+  APP_COMPONENT: backend
+  TAG_DEPLOYMENT: dev-latest
+  IMAGE_DIGEST: 0
+
+jobs:
+  build-publish-images:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref_name == 'master' && 'production' || 'development' }}
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build ECR repository URL and variables
+        id: build_ecr_url
+        run: |
+          export ECR_REPOSITORY_NAME=$(echo "${{ env.GH_REPOSITORY_NAME }}" | tr '[:upper:]' '[:lower:]')
+          echo "${ECR_REPOSITORY_NAME}" >> $GITHUB_ENV
+          export ECR_REPOSITORY_URL="${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${ECR_REPOSITORY_NAME}"
+          echo "ECR_REPOSITORY_URL=${ECR_REPOSITORY_URL}" >> $GITHUB_ENV
+          VERSION_IMAGE=$(git rev-parse --short HEAD)
+          DT=$(date +"%Y-%m-%d")
+          TM=$(date +"%H:%M:%S")
+          export VERSION_MESSAGE="Build_Commit=${VERSION_IMAGE}  Date=${DT}  Time=${TM}"
+          echo "VERSION_MESSAGE=${VERSION_MESSAGE}" >> $GITHUB_ENV
