@@ -33,7 +33,3 @@ jobs:
         id: build_ecr_url
         run: |
           export ECR_REPOSITORY_NAME=$(echo "${{ env.GH_REPOSITORY_NAME }}" | tr '[:upper:]' '[:lower:]')
-          echo "${ECR_REPOSITORY_NAME}" >> $GITHUB_ENV
-          export ECR_REPOSITORY_URL="${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${ECR_REPOSITORY_NAME}"
-          echo "ECR_REPOSITORY_URL=${ECR_REPOSITORY_URL}" >> $GITHUB_ENV
-
