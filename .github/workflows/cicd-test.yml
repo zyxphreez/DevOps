@@ -33,7 +33,7 @@ jobs:
         id: build_ecr_url
         run: |
           ECR_REPOSITORY_NAME=$(echo "${{ env.GH_REPOSITORY_NAME }}" | tr '[:upper:]' '[:lower:]')
-          echo "${ECR_REPOSITORY_NAME}" >> $GITHUB_ENV
+          echo "ECR_REPOSITORY_NAME=${ECR_REPOSITORY_NAME}" >> $GITHUB_ENV
       - name: check variables
         id: check_variables
         run: |
