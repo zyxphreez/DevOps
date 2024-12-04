@@ -39,8 +39,12 @@ jobs:
           VERSION_IMAGE=$(git rev-parse --short HEAD)
           DT=$(date +"%Y-%m-%d")
           TM=$(date +"%H:%M:%S")          
+          export VERSION_MESSAGE="Build_Commit=${VERSION_IMAGE}  Date=${DT}  Time=${TM}"
+          echo "VERSION_MESSAGE=${VERSION_MESSAGE}" >> $GITHUB_ENV
+          
       - name: check variables
         id: check_variables
         run: |
           echo "${{ env.ECR_REPOSITORY_NAME }}"
           echo "${{ env.ECR_REPOSITORY_URL }}"
+          echo "${{ env.VERSION_MESSAGE }}"
