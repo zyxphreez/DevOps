@@ -16,11 +16,11 @@ jobs:
         id: check_cicd
         timeout-minutes: 15
         run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
+          PR_SHA=$(gh pr view ${{ github.event.pull_request.number }} --json headRefOid -q '.headRefOid')
 
-          # Find the latest 'in_progress' workflow run for this PR
-          RUN_ID=$(gh run list --workflow cicd-test.yml --json databaseId,headBranch,status -q \
-            'map(select(.headBranch == "refs/pull/'"$PR_NUMBER"'/merge" and .status == "in_progress")) | .[0].databaseId')
+          # Find the latest 'in_progress' workflow run for this PR using headSha
+          RUN_ID=$(gh run list --workflow cicd-test.yml --json databaseId,headSha,status -q \
+            'map(select(.headSha == "'"$PR_SHA"'" and .status == "in_progress")) | .[0].databaseId')
 
           if [[ -n "$RUN_ID" ]]; then
             echo "CI/CD workflow is still running (Run ID: $RUN_ID). Waiting for completion..."
