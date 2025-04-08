@@ -1,0 +1,43 @@
+name: pr-close Backend
+on:
+  pull_request:
+    types: [closed]
+jobs:
+  check-ci-execution:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Check if CI/CD Job for this PR is Running
+        id: check_cicd
+        timeout-minutes: 15
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+
+          # Find the latest 'in_progress' workflow run for this PR
+          RUN_ID=$(gh run list --workflow cicd-test.yml --json databaseId,headBranch,status -q \
+            'map(select(.headBranch == "refs/pull/'"$PR_NUMBER"'/merge" and .status == "in_progress")) | .[0].databaseId')
+
+          if [[ -n "$RUN_ID" ]]; then
+            echo "CI/CD workflow is still running (Run ID: $RUN_ID). Waiting for completion..."
+            
+            while true; do
+              STATUS=$(gh run view "$RUN_ID" --json status -q '.status')
+
+              if [[ "$STATUS" == "completed" ]]; then
+                echo "CI/CD workflow finished. Proceeding with cleanup."
+                break
+              fi
+
+              echo "Still waiting for CI/CD job to complete..."
+              sleep 30
+            done
+          else
+            echo "No active CI/CD jobs for this PR. Proceeding with cleanup."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
