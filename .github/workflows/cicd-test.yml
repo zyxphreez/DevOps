@@ -26,3 +26,17 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      - name: "Get PR number if this is a PR"
+        if: github.ref_name != 'main'
+        uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+      - name: Check PR Status Before Deployment
+        id: check_pr
+        run: |
+          PR_STATE=$(gh pr view ${{ github.event.pull_request.number }} --json state -q '.state')
+          if [[ "$PR_STATE" != "OPEN" ]]; then
+            echo "PR is closed. Skipping deployment."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
