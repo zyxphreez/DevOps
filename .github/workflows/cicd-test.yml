@@ -1,4 +1,3 @@
-#workflow to test
 name: CICD Backend Pipeline on Develop
 on:
   workflow_dispatch:
@@ -36,6 +35,7 @@ jobs:
         id: check_pr
         run: |
           PR_STATE=$(gh pr view ${{ github.event.pull_request.number }} --json state -q '.state')
+          echo "$PR_STATE"
           if [[ "$PR_STATE" != "OPEN" ]]; then
             echo "PR is closed. Skipping deployment."
             exit 1
