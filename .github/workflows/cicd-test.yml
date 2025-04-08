@@ -44,3 +44,7 @@ jobs:
           sleep 300
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deployment
+        id: deploy
+        run: |
+          echo "this step was executed"
