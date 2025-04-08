@@ -40,5 +40,6 @@ jobs:
             echo "PR is closed. Skipping deployment."
             exit 1
           fi
+          sleep 300
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
