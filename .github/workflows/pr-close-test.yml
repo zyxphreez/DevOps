@@ -10,8 +10,8 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      #- name: Checkout Code
-      #  uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
       - name: Check if CI/CD Job for this PR is Running
         id: check_cicd
         timeout-minutes: 15
