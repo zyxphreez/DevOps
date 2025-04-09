@@ -31,6 +31,11 @@ jobs:
         if: github.ref_name != 'master'
         uses: jwalton/gh-find-current-pr@v1
         id: findPr
+      - name: preDeployment
+        id: preDeploy
+        run: |
+          echo "this step was executed"
+          sleep 120
       - name: Check PR Status Before Deployment
         if: github.ref_name != 'master'
         id: check_pr
@@ -41,7 +46,6 @@ jobs:
             echo "PR is closed. Skipping deployment."
             exit 1
           fi
-          sleep 300
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deployment
