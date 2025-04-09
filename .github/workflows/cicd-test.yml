@@ -42,7 +42,7 @@ jobs:
         run: |
           PR_STATE=$(gh pr view ${{ github.event.pull_request.number }} --json state -q '.state')
           echo "PR state: $PR_STATE"
-
+          
           if [[ "$PR_STATE" != "OPEN" ]]; then
             echo "pr_open=false" >> "$GITHUB_OUTPUT"
             echo "PR is not OPEN. Skipping deployment."
@@ -51,6 +51,7 @@ jobs:
             echo "pr_open=true" >> "$GITHUB_OUTPUT"
             echo "PR is OPEN. Proceeding with deployment."
           fi
+          sleep 300
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deployment
