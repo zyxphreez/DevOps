@@ -37,18 +37,24 @@ jobs:
           echo "this step was executed"
           sleep 120
       - name: Check PR Status Before Deployment
-        if: github.ref_name != 'master'
+        if: github.ref_name != 'main'
         id: check_pr
         run: |
           PR_STATE=$(gh pr view ${{ github.event.pull_request.number }} --json state -q '.state')
-          echo "$PR_STATE"
+          echo "PR state: $PR_STATE"
+
           if [[ "$PR_STATE" != "OPEN" ]]; then
-            echo "PR is closed. Skipping deployment."
-            exit 1
+            echo "pr_open=false" >> "$GITHUB_OUTPUT"
+            echo "PR is not OPEN. Skipping deployment."
+            exit 0
+          else
+            echo "pr_open=true" >> "$GITHUB_OUTPUT"
+            echo "PR is OPEN. Proceeding with deployment."
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deployment
+        if: steps.check_pr.outputs.pr_open == 'true'
         id: deploy
         run: |
           echo "this step was executed"
